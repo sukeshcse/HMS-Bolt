@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockRooms } from '@/data/mockData';
 import { Room } from '@/types';
-import { Plus, Search, Filter } from 'lucide-react';
+import { Plus, Search, Filter, Sparkles } from 'lucide-react';
 
 export const Rooms: React.FC = () => {
   const [rooms] = useState<Room[]>(mockRooms);
@@ -15,7 +15,6 @@ export const Rooms: React.FC = () => {
 
   const handleManageRoom = (room: Room) => {
     console.log('Managing room:', room);
-    // Here you would open a room management modal or navigate to a detailed view
   };
 
   const filteredRooms = rooms.filter(room => {
@@ -26,26 +25,26 @@ export const Rooms: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-8 min-h-screen bg-gradient-to-br from-violet-50 via-white to-cyan-50">
       {/* Header Actions */}
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
+      <div className="flex flex-col sm:flex-row justify-between gap-6">
         <div className="flex flex-1 items-center space-x-4">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
             <Input
               placeholder="Search rooms..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-12 pr-4 py-3 rounded-2xl border-violet-200 bg-white/80 backdrop-blur-sm focus:bg-white focus:border-violet-400 focus:ring-violet-200 transition-all duration-300 hover:shadow-glow"
             />
           </div>
           
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
-              <Filter className="h-4 w-4 mr-2" />
+            <SelectTrigger className="w-48 rounded-2xl border-violet-200 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300">
+              <Filter className="h-4 w-4 mr-2 text-violet-500" />
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-2xl border-violet-200 bg-white/95 backdrop-blur-xl">
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="available">Available</SelectItem>
               <SelectItem value="occupied">Occupied</SelectItem>
@@ -56,10 +55,10 @@ export const Rooms: React.FC = () => {
           </Select>
 
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-48 rounded-2xl border-violet-200 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-2xl border-violet-200 bg-white/95 backdrop-blur-xl">
               <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="standard">Standard</SelectItem>
               <SelectItem value="deluxe">Deluxe</SelectItem>
@@ -69,26 +68,36 @@ export const Rooms: React.FC = () => {
           </Select>
         </div>
 
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
+        <Button className="bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-600 hover:to-cyan-600 text-white border-0 rounded-2xl px-6 py-3 font-semibold shadow-lg hover:shadow-glow transition-all duration-300 hover:scale-105">
+          <Plus className="h-5 w-5 mr-2" />
+          <Sparkles className="h-4 w-4 mr-2" />
           Add Room
         </Button>
       </div>
 
       {/* Room Cards Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredRooms.map((room) => (
-          <RoomCard
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {filteredRooms.map((room, index) => (
+          <div
             key={room.id}
-            room={room}
-            onManage={handleManageRoom}
-          />
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <RoomCard
+              room={room}
+              onManage={handleManageRoom}
+            />
+          </div>
         ))}
       </div>
 
       {filteredRooms.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No rooms found matching your criteria.</p>
+        <div className="text-center py-16">
+          <div className="rounded-3xl bg-white/80 backdrop-blur-xl p-12 shadow-xl max-w-md mx-auto">
+            <div className="rounded-full bg-gradient-to-r from-violet-100 to-cyan-100 p-4 w-16 h-16 mx-auto mb-4">
+              <Search className="h-8 w-8 text-violet-500 mx-auto" />
+            </div>
+            <p className="text-gray-500 font-medium">No rooms found matching your criteria.</p>
+          </div>
         </div>
       )}
     </div>
