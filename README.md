@@ -1,200 +1,298 @@
 # LuxeStay Premium Hotel Management System
 
-A modern, production-ready Hotel Management System built with React 18, TypeScript, and Vite. Features a beautiful, responsive UI with advanced animations and a comprehensive set of hotel management tools.
+A complete, production-ready Hotel Management System built with modern technologies and premium design aesthetics.
 
-## 🌟 Features
+## 🏗️ Architecture
 
-### Core Modules
-- **Dashboard** - Real-time hotel metrics and analytics
-- **Front Office** - Guest check-in/check-out management
-- **Bookings** - Reservation management and tracking
-- **Rooms & Facilities** - Room status and facility management
-- **Billing & Payments** - Invoice and payment processing
-- **Room Service** - Food and beverage order management
-- **Tickets & Support** - Guest complaints and maintenance requests
-- **Reports & Analytics** - Business intelligence and insights
-- **Staff Management** - Employee schedules and roles
-- **Settings** - System configuration and preferences
+### Frontend
+- **React 18** with TypeScript
+- **Material-UI v5** with custom premium midnight theme
+- **Redux Toolkit** with RTK Query for state management
+- **Framer Motion** for smooth animations
+- **React Router v6** for navigation
+- **Chart.js** for data visualization
 
-### Design Features
-- **Modern UI** - Glass morphism effects with backdrop blur
-- **Gradient Design** - Beautiful violet-to-cyan color scheme
-- **Smooth Animations** - Hover effects, transitions, and micro-interactions
-- **Responsive Layout** - Mobile-first design approach
-- **Dark/Light Mode** - Theme switching capability
-- **Premium Typography** - Inter font family with proper hierarchy
+### Backend
+- **Node.js 18** with TypeScript
+- **Express.js** REST API
+- **PostgreSQL** with Prisma ORM
+- **JWT** authentication with refresh tokens
+- **Socket.IO** for real-time features
+- **BullMQ** for background jobs
+- **Swagger** API documentation
 
-### Technical Features
-- **React 18** with TypeScript for type safety
-- **Vite** for fast development and building
-- **Tailwind CSS** for utility-first styling
-- **Radix UI** components for accessibility
-- **Recharts** for data visualization
-- **Redux Toolkit** ready for state management
-- **React Router** for navigation
-- **Formik + Yup** for form handling
+### Infrastructure
+- **Docker Compose** for development
+- **Nginx** reverse proxy
+- **Redis** for caching and sessions
+- **pgAdmin** for database management
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn
+- Node.js 18+
+- Docker & Docker Compose
+- Git
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd hms-premium-ui
+   cd luxestay-hms
    ```
 
 2. **Install dependencies**
    ```bash
-   npm install
+   npm run install:all
    ```
 
 3. **Set up environment variables**
    ```bash
-   cp .env.example .env
+   # Backend
+   cp backend/.env.example backend/.env
+   
+   # Frontend
+   cp frontend/.env.example frontend/.env
    ```
-   Edit `.env` with your configuration.
 
-4. **Start development server**
+4. **Start with Docker (Recommended)**
    ```bash
+   npm run docker:up
+   ```
+
+5. **Or start manually**
+   ```bash
+   # Start database and Redis
+   docker-compose up postgres redis -d
+   
+   # Set up database
+   npm run db:setup
+   
+   # Start development servers
    npm run dev
    ```
 
-5. **Open your browser**
-   Navigate to `http://localhost:5173`
+## 🌐 Access Points
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:3001
+- **API Documentation**: http://localhost:3001/api/docs
+- **pgAdmin**: http://localhost:5050 (admin@luxestay.com / admin123)
 
 ## 📁 Project Structure
 
 ```
-src/
-├── app/                 # Redux store configuration
-├── components/          # Reusable UI components
-│   ├── common/         # Generic components (Button, DataTable, etc.)
-│   ├── layout/         # Layout components (Sidebar, Header)
-│   ├── dashboard/      # Dashboard-specific components
-│   ├── bookings/       # Booking management components
-│   └── rooms/          # Room management components
-├── features/           # Feature-based modules
-├── hooks/              # Custom React hooks
-├── layouts/            # Page layouts
-├── pages/              # Page components
-├── routes/             # Route definitions
-├── types/              # TypeScript type definitions
-├── utils/              # Utility functions
-└── data/               # Mock data and constants
+luxestay-hms/
+├── frontend/                 # React frontend
+│   ├── src/
+│   │   ├── app/             # Redux store & API services
+│   │   ├── components/      # Reusable components
+│   │   ├── layouts/         # Page layouts
+│   │   ├── pages/           # Page components
+│   │   ├── hooks/           # Custom hooks
+│   │   └── contexts/        # React contexts
+│   └── public/
+├── backend/                 # Node.js backend
+│   ├── src/
+│   │   ├── modules/         # Feature modules
+│   │   ├── config/          # Configuration
+│   │   ├── middlewares/     # Express middlewares
+│   │   └── scripts/         # Utility scripts
+│   ├── prisma/             # Database schema & migrations
+│   └── tests/              # Test files
+├── nginx/                  # Nginx configuration
+└── docker-compose.yml     # Docker services
 ```
 
 ## 🎨 Design System
 
 ### Color Palette
-- **Primary**: Violet (#8b5cf6) to Cyan (#06b6d4) gradients
-- **Success**: Emerald (#10b981)
-- **Warning**: Amber (#f59e0b)
-- **Error**: Rose (#f43f5e)
-- **Neutral**: Gray scale with proper contrast
+- **Primary**: #2B2F77 (Premium Midnight)
+- **Secondary**: #FFB703 (Golden Accent)
+- **Success**: #34C759
+- **Error**: #FF453A
+- **Background**: #F5F6FA
+- **Surface**: #FFFFFF
 
 ### Typography
 - **Font Family**: Inter (Google Fonts)
-- **Weights**: 300, 400, 500, 600, 700, 800
-- **Line Heights**: 120% for headings, 150% for body text
+- **Weights**: 400, 500, 600, 700, 800
+- **Scale**: 8pt grid system
 
-### Spacing System
-- **Base Unit**: 8px
-- **Scale**: 4px, 8px, 12px, 16px, 20px, 24px, 32px, 40px, 48px, 64px
+### Components
+- **Border Radius**: 12px default
+- **Shadows**: Soft, layered shadows
+- **Animations**: Smooth 300ms transitions
+- **Hover Effects**: Scale, glow, and color transitions
 
-## 🔧 API Integration
+## 🔧 API Endpoints
 
-The application is designed to work with RESTful APIs. Replace the mock data with real API calls:
+### Authentication
+- `POST /api/v1/auth/login` - User login
+- `POST /api/v1/auth/register` - User registration
+- `POST /api/v1/auth/refresh` - Refresh token
+- `GET /api/v1/auth/profile` - Get user profile
+- `POST /api/v1/auth/logout` - User logout
 
-### API Endpoints Structure
-```
-/api/auth/login          # Authentication
-/api/auth/logout         # Logout
-/api/dashboard/stats     # Dashboard metrics
-/api/bookings           # Booking CRUD operations
-/api/rooms              # Room management
-/api/guests             # Guest profiles
-/api/invoices           # Billing and payments
-/api/orders             # Room service orders
-/api/tickets            # Support tickets
-/api/staff              # Staff management
-/api/reports            # Analytics and reports
-```
+### Core Modules
+- **Guests**: `/api/v1/guests`
+- **Bookings**: `/api/v1/bookings`
+- **Rooms**: `/api/v1/rooms`
+- **Staff**: `/api/v1/staff`
+- **Housekeeping**: `/api/v1/housekeeping`
+- **Maintenance**: `/api/v1/maintenance`
+- **Inventory**: `/api/v1/inventory`
+- **Tickets**: `/api/v1/tickets`
+- **Orders**: `/api/v1/orders`
+- **Payments**: `/api/v1/payments`
+- **Reports**: `/api/v1/reports`
 
-### Environment Configuration
-Update `.env` file with your API base URL:
-```env
-VITE_API_BASE_URL=https://your-api-domain.com/api
-```
-
-## 🛠️ Development Scripts
+## 🧪 Testing
 
 ```bash
-# Development
-npm run dev              # Start development server
-npm run build           # Build for production
-npm run preview         # Preview production build
+# Run all tests
+npm run test
 
-# Code Quality
-npm run lint            # Run ESLint
-npm run type-check      # TypeScript type checking
+# Frontend tests
+npm run test:frontend
 
-# Testing (when implemented)
-npm run test            # Run tests
-npm run test:coverage   # Test coverage report
+# Backend tests
+npm run test:backend
+
+# Test coverage
+cd backend && npm run test:coverage
 ```
 
-## 📱 Responsive Breakpoints
+## 🏗️ Development
 
-- **Mobile**: 320px - 768px
-- **Tablet**: 768px - 1024px
-- **Desktop**: 1024px - 1440px
-- **Large Desktop**: 1440px+
+### Frontend Development
+```bash
+cd frontend
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run storybook    # Start Storybook
+```
 
-## 🎯 Performance Optimizations
+### Backend Development
+```bash
+cd backend
+npm run dev          # Start with hot reload
+npm run build        # Build TypeScript
+npm run db:studio    # Open Prisma Studio
+npm run db:migrate   # Run migrations
+```
 
-- **Code Splitting**: Lazy loading for route components
-- **Image Optimization**: WebP format with fallbacks
-- **Bundle Analysis**: Webpack bundle analyzer integration
-- **Caching**: Service worker for offline functionality
-- **Tree Shaking**: Unused code elimination
+### Database Management
+```bash
+# Generate Prisma client
+cd backend && npm run db:generate
+
+# Create migration
+cd backend && npx prisma migrate dev --name migration_name
+
+# Reset database
+cd backend && npx prisma migrate reset
+
+# Seed database
+npm run db:seed
+```
+
+## 🐳 Docker Commands
+
+```bash
+# Start all services
+npm run docker:up
+
+# Stop all services
+npm run docker:down
+
+# View logs
+docker-compose logs -f
+
+# Rebuild services
+docker-compose up --build
+```
 
 ## 🔒 Security Features
 
-- **JWT Authentication**: Secure token-based auth
-- **RBAC**: Role-based access control
-- **Input Validation**: Formik + Yup validation
-- **XSS Protection**: Sanitized user inputs
-- **CSRF Protection**: Cross-site request forgery prevention
+- **JWT Authentication** with httpOnly cookies
+- **Role-Based Access Control** (RBAC)
+- **Input Validation** with Zod schemas
+- **SQL Injection Protection** via Prisma
+- **CORS Configuration**
+- **Helmet.js** security headers
+- **Rate Limiting** (TODO)
+- **File Upload Validation** (TODO)
+
+## 📊 Features
+
+### Core Modules
+- ✅ **Dashboard** - KPI cards, charts, recent activity
+- ✅ **Authentication** - Login, register, JWT tokens
+- 🚧 **Bookings** - Reservation management
+- 🚧 **Rooms** - Room status and management
+- 🚧 **Guests** - Guest profiles and history
+- 🚧 **Staff** - Employee management
+- 🚧 **Housekeeping** - Task management
+- 🚧 **Maintenance** - Issue tracking
+- 🚧 **Inventory** - Stock management
+- 🚧 **Tickets** - Help desk system
+- 🚧 **Orders** - Room service orders
+- 🚧 **Payments** - Billing and payments
+- 🚧 **Reports** - Analytics and exports
+
+### Technical Features
+- ✅ **Real-time Updates** via Socket.IO
+- ✅ **API Documentation** with Swagger
+- ✅ **Database Migrations** with Prisma
+- ✅ **Error Handling** with global handlers
+- ✅ **Logging** with Winston
+- ✅ **Caching** with Redis
+- 🚧 **Background Jobs** with BullMQ
+- 🚧 **File Uploads** with Multer
+- 🚧 **Email Notifications**
+- 🚧 **PDF Generation**
+- 🚧 **CSV Exports**
 
 ## 🚀 Deployment
 
-### Build for Production
+### Production Build
 ```bash
+# Build frontend
+npm run build:frontend
+
+# Build backend
+npm run build:backend
+
+# Build all
 npm run build
 ```
 
-### Deploy to Netlify
-```bash
-# Install Netlify CLI
-npm install -g netlify-cli
+### Environment Variables
 
-# Deploy
-netlify deploy --prod --dir=dist
+#### Backend (.env)
+```env
+NODE_ENV=production
+PORT=3001
+DATABASE_URL=postgresql://user:password@localhost:5432/luxestay_hms
+REDIS_URL=redis://localhost:6379
+JWT_SECRET=your-super-secret-jwt-key
+JWT_REFRESH_SECRET=your-super-secret-refresh-key
+FRONTEND_URL=http://localhost:3000
 ```
 
-### Deploy to Vercel
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Deploy
-vercel --prod
+#### Frontend (.env)
+```env
+VITE_API_BASE_URL=http://localhost:3001/api/v1
+VITE_WS_URL=http://localhost:3001
 ```
+
+## 📈 Performance
+
+- **Frontend**: Code splitting, lazy loading, memoization
+- **Backend**: Database indexing, query optimization, caching
+- **Infrastructure**: Nginx compression, static file serving
 
 ## 🤝 Contributing
 
@@ -210,20 +308,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **Radix UI** for accessible component primitives
-- **Tailwind CSS** for utility-first CSS framework
-- **Lucide React** for beautiful icons
-- **Recharts** for data visualization
-- **Inter Font** for typography
-
-## 📞 Support
-
-For support and questions:
-- Create an issue on GitHub
-- Email: support@luxestay-hms.com
-- Documentation: [docs.luxestay-hms.com](https://docs.luxestay-hms.com)
+- **Material-UI** for the component library
+- **Prisma** for the database toolkit
+- **Framer Motion** for animations
+- **Chart.js** for data visualization
 
 ---
 
 Built with ❤️ for the hospitality industry
-```

@@ -1,0 +1,314 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  STAFF
+  HOUSEKEEPING
+  MAINTENANCE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  NO_SHOW
+}
+
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+  CLEANING
+  OUT_OF_ORDER
+}
+
+enum RoomType {
+  STANDARD
+  DELUXE
+  SUITE
+  PRESIDENTIAL
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum OrderStatus {
+  PENDING
+  PREPARING
+  READY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  firstName   String
+  lastName    String
+  role        UserRole @default(STAFF)
+  avatar      String?
+  department  String?
+  shift       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  assignedTasks      Task[]
+  assignedTickets    Ticket[]
+  createdBookings    Booking[]
+  processedOrders    Order[]
+  createdMaintenanceIssues MaintenanceIssue[]
+
+  @@map("users")
+}
+
+model Guest {
+  id           String   @id @default(cuid())
+  firstName    String
+  lastName     String
+  email        String   @unique
+  phone        String?
+  nationality  String?
+  idType       String?
+  idNumber     String?
+  loyaltyTier  String   @default("BRONZE")
+  totalStays   Int      @default(0)
+  preferences  String[] @default([])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  bookings Booking[]
+  orders   Order[]
+
+  @@map("guests")
+}
+
+model Room {
+  id            String     @id @default(cuid())
+  number        String     @unique
+  type          RoomType
+  status        RoomStatus @default(AVAILABLE)
+  floor         Int
+  capacity      Int
+  price         Decimal    @db.Decimal(10, 2)
+  amenities     String[]   @default([])
+  description   String?
+  lastCleaned   DateTime?
+  nextMaintenance DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  // Relations
+  bookings          Booking[]
+  tasks             Task[]
+  maintenanceIssues MaintenanceIssue[]
+  orders            Order[]
+
+  @@map("rooms")
+}
+
+model Booking {
+  id             String        @id @default(cuid())
+  guestId        String
+  roomId         String
+  checkIn        DateTime
+  checkOut       DateTime
+  adults         Int           @default(1)
+  children       Int           @default(0)
+  status         BookingStatus @default(PENDING)
+  source         String        @default("DIRECT")
+  totalAmount    Decimal       @db.Decimal(10, 2)
+  specialRequests String?
+  createdById    String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  // Relations
+  guest     Guest     @relation(fields: [guestId], references: [id])
+  room      Room      @relation(fields: [roomId], references: [id])
+  createdBy User      @relation(fields: [createdById], references: [id])
+  invoices  Invoice[]
+  orders    Order[]
+
+  @@map("bookings")
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  type        String     // CLEANING, MAINTENANCE, INSPECTION
+  status      TaskStatus @default(PENDING)
+  priority    String     @default("MEDIUM")
+  roomId      String?
+  assignedToId String?
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  room       Room? @relation(fields: [roomId], references: [id])
+  assignedTo User? @relation(fields: [assignedToId], references: [id])
+
+  @@map("tasks")
+}
+
+model MaintenanceIssue {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  priority    String     @default("MEDIUM")
+  status      TaskStatus @default(PENDING)
+  roomId      String?
+  reportedById String
+  assignedToId String?
+  estimatedCost Decimal? @db.Decimal(10, 2)
+  actualCost   Decimal?  @db.Decimal(10, 2)
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  room       Room? @relation(fields: [roomId], references: [id])
+  reportedBy User  @relation(fields: [reportedById], references: [id])
+  assignedTo User? @relation(fields: [assignedToId], references: [id])
+
+  @@map("maintenance_issues")
+}
+
+model InventoryItem {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  quantity    Int
+  minStock    Int      @default(0)
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  supplier    String?
+  location    String?
+  lastRestocked DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("inventory_items")
+}
+
+model Ticket {
+  id          String         @id @default(cuid())
+  title       String
+  description String
+  category    String
+  priority    TicketPriority @default(MEDIUM)
+  status      TicketStatus   @default(OPEN)
+  roomNumber  String?
+  guestEmail  String?
+  assignedToId String?
+  reportedById String?
+  slaDeadline DateTime?
+  resolvedAt  DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relations
+  assignedTo User? @relation(fields: [assignedToId], references: [id])
+
+  @@map("tickets")
+}
+
+model Order {
+  id               String      @id @default(cuid())
+  guestId          String?
+  bookingId        String?
+  roomId           String
+  items            Json        // Array of order items
+  status           OrderStatus @default(PENDING)
+  total            Decimal     @db.Decimal(10, 2)
+  specialInstructions String?
+  orderTime        DateTime    @default(now())
+  estimatedDelivery DateTime?
+  deliveredAt      DateTime?
+  processedById    String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  // Relations
+  guest       Guest?   @relation(fields: [guestId], references: [id])
+  booking     Booking? @relation(fields: [bookingId], references: [id])
+  room        Room     @relation(fields: [roomId], references: [id])
+  processedBy User?    @relation(fields: [processedById], references: [id])
+
+  @@map("orders")
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  bookingId     String
+  amount        Decimal       @db.Decimal(10, 2)
+  tax           Decimal       @db.Decimal(10, 2)
+  total         Decimal       @db.Decimal(10, 2)
+  status        PaymentStatus @default(PENDING)
+  paymentMethod String?
+  items         Json          // Array of invoice items
+  issuedAt      DateTime      @default(now())
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@map("invoices")
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  type      String   // OCCUPANCY, REVENUE, KPI
+  data      Json
+  period    String   // DAILY, WEEKLY, MONTHLY, YEARLY
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+
+  @@map("reports")
+}
