@@ -57,7 +57,7 @@ function App() {
           {/* Auth Routes */}
           <Route path="/auth" element={<AuthLayout />}>
             <Route path="login" element={<Login />} />
-            <Route index element={<Navigate to="/auth/login" replace />} />
+            <Route index element={<Navigate to="/auth/login\" replace />} />
           </Route>
 
           {/* Protected Routes */}
@@ -240,7 +240,7 @@ function App() {
           </Route>
 
           {/* Redirect to dashboard */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/\" replace />} />
         </Routes>
       </AnimatePresence>
     </ToastProvider>
